@@ -1,2 +1,2 @@
-# mendixlicense
-Mendix local licensetool 
+# licentie-calculator
+Licentie calculator
