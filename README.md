@@ -1,0 +1,2 @@
+# mendixlicense
+Mendix local licensetool 
