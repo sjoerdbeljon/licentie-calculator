@@ -3,474 +3,672 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>  Licentie Calculator</title>
+    <title>Licentie Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-        }
-        .btn {
-            transition: background-color 0.3s, transform 0.2s;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        .input-field {
-             width: 100%;
-             padding: 0.5rem 0.75rem;
-             border: 1px solid #D1D5DB;
-             border-radius: 0.375rem;
-             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        }
-        .input-field:focus {
-            outline: none;
-            border-color: #4F46E5;
-            box-shadow: 0 0 0 1px #4F46E5;
-        }
-        .info-icon {
-            display: inline-block;
-            position: relative;
-            cursor: pointer;
-            color: #6B7280;
-            margin-left: 8px;
-        }
-        .info-icon .tooltip {
-            visibility: hidden;
-            width: 280px;
-            background-color: #1F2937;
-            color: #fff;
-            text-align: left;
-            border-radius: 6px;
-            padding: 8px 12px;
-            position: absolute;
-            z-index: 10;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -140px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.8rem;
-            font-weight: 400;
-            line-height: 1.4;
-        }
-        .info-icon:hover .tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
-        .section-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-        .section-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #111827;
-        }
-        .view-toggle-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-        .view-toggle-btn.active {
-            background-color: #4F46E5;
-            color: white;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        }
-        .view-toggle-btn.inactive {
-            background-color: #E5E7EB;
-            color: #374151;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .card { background-color: white; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); padding: 2rem; }
+        .input-field { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #D1D5DB; border-radius: 0.375rem; transition: border-color 0.15s; }
+        .input-field:focus { outline: none; border-color: #4F46E5; ring: 2px solid #4F46E5; }
+        .view-toggle-btn { padding: 0.5rem 1.5rem; font-weight: 500; transition: all 0.2s; }
+        .view-toggle-btn.active { background-color: #4F46E5; color: white; }
+        .view-toggle-btn.inactive { background-color: #E5E7EB; color: #374151; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c7c7c7; border-radius: 3px; }
+        .tab-btn { border-bottom: 2px solid transparent; color: #6B7280; padding-bottom: 0.5rem; }
+        .tab-btn.active { border-color: #4F46E5; color: #4F46E5; font-weight: 600; }
+        .pricing-table th { background-color: #F3F4F6; text-transform: uppercase; font-size: 0.75rem; color: #374151; padding: 0.75rem; text-align: left; font-weight: 600; border-bottom: 1px solid #E5E7EB; }
+        .pricing-table td { padding: 0.75rem; font-size: 0.875rem; border-bottom: 1px solid #F3F4F6; color: #4B5563; }
+        .badge-one-time { background-color: #FEF3C7; color: #92400E; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
+        .sub-option { border-left: 2px solid #E5E7EB; margin-left: 0.5rem; padding-left: 0.75rem; margin-top: 0.5rem; }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-5xl">
-        <div class="card">
-            <div class="flex justify-center mb-6">
-                <div class="inline-flex rounded-md shadow-sm" role="group">
-                    <button type="button" id="show-calculator-btn" class="view-toggle-btn rounded-l-lg">Calculator</button>
-                    <button type="button" id="show-explanation-btn" class="view-toggle-btn rounded-r-lg">Uitleg Prijsmodel</button>
+<body class="bg-gray-50 min-h-screen p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- Header -->
+        <div class="flex flex-col items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2"> Prijs Calculator <span class="text-indigo-600">FY2026</span></h1>
+            <p class="text-gray-500 mb-6">Interactieve berekening & complete prijslijst details (Okt 2025).</p>
+            <div class="inline-flex rounded-lg shadow-sm bg-gray-200 p-1">
+                <button id="show-calculator-btn" class="view-toggle-btn active rounded-md">Calculator</button>
+                <button id="show-explanation-btn" class="view-toggle-btn inactive rounded-md">Prijslijst Details</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- CALCULATOR VIEW -->
+            <div id="calculator-view" class="lg:col-span-8 space-y-6">
+                
+                <!-- 1. Platform -->
+                <div class="card">
+                    <div class="flex items-center mb-4 pb-2 border-b border-gray-100">
+                        <i class="fa-solid fa-layer-group mr-3 text-indigo-500 text-xl"></i>
+                        <h2 class="text-lg font-bold text-gray-800">1. Platform Licentie</h2>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Applicatie Type</label>
+                            <select id="app-license-type" class="input-field bg-gray-50"></select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Editie (Tier)</label>
+                            <select id="platform-tier" class="input-field bg-gray-50"></select>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- 2. Users -->
+                <div class="card">
+                    <div class="flex items-center mb-4 pb-2 border-b border-gray-100">
+                        <i class="fa-solid fa-users mr-3 text-indigo-500 text-xl"></i>
+                        <h2 class="text-lg font-bold text-gray-800">2. Gebruikers & Workstations</h2>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-12 gap-4 items-center">
+                            <label class="col-span-12 sm:col-span-4 text-sm font-medium text-gray-700">Interne Users (Single App)</label>
+                            <div class="col-span-8 sm:col-span-5"><input type="number" id="internal-single-count" min="0" placeholder="Aantal" class="input-field"></div>
+                            <div class="col-span-4 sm:col-span-3"><input type="number" id="internal-single-discount" min="0" max="100" placeholder="Korting %" class="input-field text-sm"></div>
+                        </div>
+                        <div class="grid grid-cols-12 gap-4 items-center">
+                            <label class="col-span-12 sm:col-span-4 text-sm font-medium text-gray-700">Interne Users (Multi App)</label>
+                            <div class="col-span-8 sm:col-span-5"><input type="number" id="internal-multi-count" min="0" placeholder="Aantal" class="input-field"></div>
+                            <div class="col-span-4 sm:col-span-3"><input type="number" id="internal-multi-discount" min="0" max="100" placeholder="Korting %" class="input-field text-sm"></div>
+                        </div>
+                        <div class="grid grid-cols-12 gap-4 items-center">
+                            <label class="col-span-12 sm:col-span-4 text-sm font-medium text-gray-700">Externe Users</label>
+                            <div class="col-span-8 sm:col-span-5"><input type="number" id="external-count" min="0" placeholder="Aantal" class="input-field"></div>
+                            <div class="col-span-4 sm:col-span-3"><input type="number" id="external-discount" min="0" max="100" placeholder="Korting %" class="input-field text-sm"></div>
+                        </div>
+                        <div class="grid grid-cols-12 gap-4 items-center border-t pt-4 border-gray-100">
+                            <div class="col-span-12 sm:col-span-4 flex items-center"><label class="text-sm font-medium text-gray-700">Workstation Clients</label></div>
+                            <div class="col-span-8 sm:col-span-5"><input type="number" id="workstation-count" min="0" placeholder="Aantal" class="input-field"></div>
+                            <div class="col-span-4 sm:col-span-3"><input type="number" id="workstation-discount" min="0" max="100" placeholder="Korting %" class="input-field text-sm"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Deployment Options -->
+                <div class="card">
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-server mr-3 text-indigo-500 text-xl"></i>
+                            <h2 class="text-lg font-bold text-gray-800">3. Deployment Mode</h2>
+                        </div>
+                        <button id="add-env-btn" type="button" class="hidden text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1 rounded-full"><i class="fa-solid fa-plus mr-1"></i> Pack Toevoegen</button>
+                    </div>
+
+                    <div class="mb-4">
+                        <select id="deployment-mode" class="input-field bg-gray-50 border-indigo-200">
+                            <option value="public_cloud">MX Public Cloud (Managed)</option>
+                            <option value="dedicated_cloud">MX Cloud Dedicated (Single Tenant)</option>
+                            <option value="azure">MX on Azure (Managed)</option>
+                            <option value="kubernetes">MX on Kubernetes (Private Cloud)</option>
+                            <option value="onprem">On-Premise / SAP / StackIT</option>
+                        </select>
+                    </div>
+
+                    <!-- Cloud -->
+                    <div id="deploy-cloud-container" class="space-y-3">
+                        <div id="dedicated-banner" class="hidden p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-800 mb-3 flex justify-between items-center">
+                            <span><i class="fa-solid fa-lock mr-2"></i><strong>Dedicated Fee:</strong> €312.612 / jaar</span>
+                        </div>
+                        <div class="grid grid-cols-12 gap-2 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider pl-1">
+                            <div class="col-span-4">Type Pack</div>
+                            <div class="col-span-4">Grootte</div>
+                            <div class="col-span-3">Aantal</div>
+                            <div class="col-span-1"></div>
+                        </div>
+                        <div id="environments-container" class="space-y-3"></div>
+                    </div>
+
+                    <!-- Azure -->
+                    <div id="deploy-azure-container" class="hidden space-y-4">
+                        <div class="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
+                            <strong>Base Package:</strong> €5.566,32 (inclusief 3 environments)
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label class="text-sm text-gray-700">Extra Environments (€604,80/st):</label>
+                            <input type="number" id="azure-extra-envs" min="0" value="0" class="input-field w-32">
+                        </div>
+                    </div>
+
+                    <!-- Kubernetes -->
+                    <div id="deploy-k8s-container" class="hidden space-y-4">
+                         <div class="p-3 bg-purple-50 border border-purple-200 rounded text-sm text-purple-800">
+                            <strong>Base Package:</strong> €5.566,56 (inclusief 3 environments)
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm text-gray-700">Totaal Extra Environments (Bovenop de 3):</label>
+                            <input type="number" id="k8s-extra-envs" min="0" value="0" class="input-field w-32">
+                        </div>
+                         <div class="flex items-center mb-2">
+                            <input type="checkbox" id="k8s-unlimited" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                            <label for="k8s-unlimited" class="ml-2 block text-sm text-gray-700">Switch naar Unlimited Package (€58.081,56)</label>
+                        </div>
+                    </div>
+
+                    <!-- On-Prem -->
+                    <div id="deploy-onprem-container" class="hidden space-y-4">
+                         <div class="p-3 bg-gray-100 border border-gray-200 rounded text-sm text-gray-800">
+                            Support fee voor "Bring Your Own Infrastructure"
+                        </div>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="radio" name="onprem-type" value="single" checked class="h-4 w-4 text-indigo-600">
+                                <span class="ml-2 text-sm text-gray-700">Per Applicatie (€5.569,20)</span>
+                            </label>
+                             <label class="flex items-center">
+                                <input type="radio" name="onprem-type" value="unlimited" class="h-4 w-4 text-indigo-600">
+                                <span class="ml-2 text-sm text-gray-700">Unlimited Applications (€27.833,28)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 4. Add-ons -->
+                <div class="card">
+                    <div class="flex items-center mb-4 pb-2 border-b border-gray-100">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-3 text-indigo-500 text-xl"></i>
+                        <h2 class="text-lg font-bold text-gray-800">4. AI & Add-ons</h2>
+                    </div>
+                    
+                    <!-- GenAI -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-semibold text-gray-900 mb-3 bg-indigo-50 inline-block px-2 py-1 rounded text-indigo-800">Generative AI</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">GenAI Resource Pack</label>
+                                <select id="genai-pack" class="input-field text-sm">
+                                    <option value="">Geen</option>
+                                    <option value="S">Small (2.5M tokens)</option>
+                                    <option value="M">Medium (5M tokens)</option>
+                                    <option value="L">Large (10M tokens)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Knowledge Base Pack</label>
+                                <select id="genai-kb" class="input-field text-sm">
+                                    <option value="">Geen</option>
+                                    <option value="standard">Standard</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Infra -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-semibold text-gray-900 mb-3 bg-gray-100 inline-block px-2 py-1 rounded text-gray-700">Infrastructure Add-ons</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Event Broker</label>
+                                <select id="event-broker" class="input-field text-sm">
+                                    <option value="">Geen</option>
+                                    <option value="S">Small</option>
+                                    <option value="M">Medium</option>
+                                    <option value="L">Large</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Adv. Audit Trail</label>
+                                <select id="audit-trail" class="input-field text-sm">
+                                    <option value="">Geen</option>
+                                    <option value="S">Small (150GB)</option>
+                                    <option value="M">Medium (750GB)</option>
+                                    <option value="L">Large (1500GB)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACV Addons -->
+                    <div class="border-t border-gray-100 pt-4 bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-bold text-indigo-900">Advanced Add-ons (Prijs o.b.v. ACV)</h3>
+                            <div class="text-xs text-indigo-600 bg-white px-2 py-1 rounded border border-indigo-200">
+                                Gebaseerd op Platform + Users Totaal
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <!-- MTA -->
+                            <div>
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" id="addon-mta" class="rounded text-indigo-600 focus:ring-indigo-500 h-5 w-5 border-gray-300">
+                                    <div>
+                                        <span class="text-sm font-medium text-gray-700">Menditect Test Automation (MTA)</span>
+                                    </div>
+                                </label>
+                                <p class="text-xs text-gray-500 ml-8 mt-1"><i class="fa-solid fa-triangle-exclamation text-yellow-500 mr-1"></i>Vereist eenmalig <strong>Enablement Package</strong> (€8.615) + Cloud Resource Pack (M of groter).</p>
+                            </div>
+
+                            <!-- QSM -->
+                            <div>
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" id="addon-qsm" class="rounded text-indigo-600 focus:ring-indigo-500 h-5 w-5 border-gray-300">
+                                    <div>
+                                        <span class="text-sm font-medium text-gray-700">Quality & Security Management (QSM)</span>
+                                    </div>
+                                </label>
+                                <!-- QSM Self Hosted Sub-Option -->
+                                <div id="qsm-sub-options" class="sub-option hidden">
+                                    <label class="flex items-center space-x-2 cursor-pointer">
+                                        <input type="checkbox" id="addon-qsm-self" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4 border-gray-300">
+                                        <span class="text-sm text-gray-600">QSM Self-Hosted (On-Premise)</span>
+                                    </label>
+                                    <div class="text-xs text-gray-500 mt-1 pl-6">
+                                        + €52.920 Annual Fee<br>
+                                        + €20.500 One-time Installation Fee<br>
+                                        <span class="text-yellow-600 italic">(Alleen beschikbaar voor QSM-M en hoger)</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500 ml-8 mt-1"><i class="fa-solid fa-triangle-exclamation text-yellow-500 mr-1"></i>Vereist eenmalig <strong>Enablement Package</strong> (€8.615).</p>
+                            </div>
+
+                            <!-- PMP -->
+                             <div>
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" id="addon-pmp" class="rounded text-indigo-600 focus:ring-indigo-500 h-5 w-5 border-gray-300">
+                                    <div>
+                                        <span class="text-sm font-medium text-purple-900">Private MX Platform (PMP)</span>
+                                    </div>
+                                </label>
+                                <p class="text-xs text-gray-500 ml-8 mt-1">Vereist eenmalige Implementation Package (Prijs op aanvraag/SoW).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="calculate-btn" class="w-full bg-indigo-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg hover:bg-indigo-700 hover:shadow-xl transition-all text-lg flex justify-center items-center">
+                    <i class="fa-solid fa-calculator mr-2"></i> Bereken Totaalprijs
+                </button>
             </div>
 
-            <!-- View Container -->
-            <div id="view-container">
-                <!-- Calculator View -->
-                <div id="calculator-view">
-                    <h1 class="text-3xl font-bold text-gray-800 text-center mb-2">  Licentie Calculator</h1>
-                    <p class="text-center text-gray-500 mb-8">Bereken de jaarlijkse kosten voor uw   licentie.</p>
-                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                        <!-- Inputs Column -->
-                        <div id="calculator-form" class="lg:col-span-3 space-y-6">
-                            <!-- 1. Platform -->
-                            <div class="border border-gray-200 p-4 rounded-lg">
-                                <div class="section-header">
-                                    <h2 class="section-title">1. Platform Licentie</h2>
-                                    <div class="info-icon">&#9432;<span class="tooltip">Kies het type platformlicentie. Dit is een vaste jaarlijkse vergoeding.<br><b>Bron:</b> PPT, slides 8-9.</span></div>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="app-license-type" class="block text-sm font-medium text-gray-700 mb-1">Applicaties</label>
-                                        <select id="app-license-type" class="input-field"></select>
-                                    </div>
-                                    <div>
-                                        <label for="platform-tier" class="block text-sm font-medium text-gray-700 mb-1">Platform Tier</label>
-                                        <select id="platform-tier" class="input-field"></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 2. Users -->
-                            <div class="border border-gray-200 p-4 rounded-lg">
-                                <div class="section-header">
-                                    <h2 class="section-title">2. Gebruikers</h2>
-                                    <div class="info-icon">&#9432;<span class="tooltip">Voer het aantal gebruikers in. De prijs wordt berekend via een staffelmodel.<br><b>Bron:</b> User-provided image.</span></div>
-                                </div>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Interne Gebruikers (Single App)</label>
-                                        <div class="flex space-x-2"><input type="number" id="internal-single-count" min="0" placeholder="Aantal" class="input-field w-2/3"><input type="number" id="internal-single-discount" min="0" max="100" placeholder="Korting %" class="input-field w-1/3"></div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Interne Gebruikers (Multi-App)</label>
-                                        <div class="flex space-x-2"><input type="number" id="internal-multi-count" min="0" placeholder="Aantal" class="input-field w-2/3"><input type="number" id="internal-multi-discount" min="0" max="100" placeholder="Korting %" class="input-field w-1/3"></div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Externe Gebruikers</label>
-                                        <div class="flex space-x-2"><input type="number" id="external-count" min="0" placeholder="Aantal" class="input-field w-2/3"><input type="number" id="external-discount" min="0" max="100" placeholder="Korting %" class="input-field w-1/3"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 3. Deployment -->
-                            <div class="border border-gray-200 p-4 rounded-lg">
-                                <div class="section-header">
-                                    <h2 class="section-title">3. Deployment</h2>
-                                    <div class="info-icon">&#9432;<span class="tooltip">Voeg cloud-omgevingen toe. Prijzen zijn gebaseerd op 'Standard Resource Packs'.<br><b>Bron:</b> PPT, slides 18 & 21.</span></div>
-                                </div>
-                                <div id="environments-container" class="space-y-3 mb-4"></div>
-                                <button id="add-env-btn" type="button" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">+ Omgeving toevoegen</button>
-                            </div>
-                            <button id="calculate-btn" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 btn text-lg">Bereken Totaalprijs</button>
-                            <div id="error-message" class="mt-4 text-center text-red-600 font-medium"></div>
+            <!-- RESULT SIDEBAR -->
+            <div class="lg:col-span-4">
+                <div id="result-card" class="card sticky top-6 bg-white border border-gray-200 shadow-xl z-10 transition-all duration-300">
+                    <h3 class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Geschat Jaarlijks Totaal</h3>
+                    <div class="flex items-baseline mb-4">
+                        <span id="total-price" class="text-4xl font-extrabold text-indigo-600">€0,00</span>
+                    </div>
+                    
+                    <!-- One-time fees section -->
+                    <div id="onetime-container" class="hidden mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <h4 class="text-xs font-bold text-yellow-800 uppercase mb-1">Eenmalige Kosten (1e jaar)</h4>
+                        <div class="flex items-baseline">
+                            <span id="onetime-price" class="text-xl font-bold text-yellow-900">€0,00</span>
                         </div>
-                        <!-- Results Column -->
-                        <div class="lg:col-span-2">
-                            <div id="result-container" class="sticky top-8 bg-gray-50 p-6 rounded-lg">
-                                <h2 class="text-xl font-semibold text-gray-800 mb-4">Resultaat Overzicht</h2>
-                                <div class="flex justify-between items-center mb-4 bg-white p-4 rounded-lg shadow-sm">
-                                    <span class="text-gray-600 font-semibold">Totaalbedrag (jaarlijks):</span>
-                                    <span id="total-price" class="text-3xl font-bold text-indigo-600">€0,00</span>
-                                </div>
-                                <hr class="my-4">
-                                <h3 class="text-lg font-semibold text-gray-700 mb-3">Uitsplitsing:</h3>
-                                <div id="calculation-breakdown" class="space-y-4"></div>
+                        <div id="onetime-details" class="text-xs text-yellow-800 mt-1 space-y-1"></div>
+                    </div>
+
+                    <div id="acv-indicator" class="hidden mb-4 p-2 bg-indigo-50 border border-indigo-100 rounded text-xs text-indigo-700 flex justify-between items-center">
+                        <span>Basis ACV (excl. Cloud):</span>
+                        <span id="acv-value" class="font-bold">€0,00</span>
+                    </div>
+
+                    <div class="border-t border-gray-100 my-4"></div>
+                    
+                    <div class="overflow-y-auto max-h-[60vh] pr-2 custom-scrollbar">
+                        <div id="calculation-breakdown" class="space-y-4">
+                            <div class="text-center py-8">
+                                <i class="fa-solid fa-arrow-left text-gray-300 text-2xl mb-2"></i>
+                                <p class="text-sm text-gray-400 italic">Vul links de gegevens in en klik op berekenen.</p>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Explanation View -->
-                <div id="explanation-view" class="hidden">
-                    <h1 class="text-3xl font-bold text-gray-800 text-center mb-8">Uitleg   Prijsmodel</h1>
-                    <div class="space-y-8">
-                        <!-- Platform Explanation -->
-                        <div>
-                            <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">1. Platform Licentie</h2>
-                            <p class="text-gray-600 mb-4">De basis van de licentie is een vast jaarlijks bedrag voor het  -platform. De prijs hangt af van het aantal applicaties en het gekozen "tier".</p>
-                            <div id="platform-explanation-content" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-                        </div>
-                        <!-- Users Explanation -->
-                        <div>
-                            <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">2. Gebruikers</h2>
-                            <p class="text-gray-600 mb-4">De kosten voor gebruikers zijn variabel en gebaseerd op een staffelmodel. Hoe meer gebruikers, hoe lager de prijs per gebruiker in een hogere staffel.</p>
-                            <div id="users-explanation-content" class="space-y-6"></div>
-                        </div>
-                        <!-- Deployment Explanation -->
-                        <div>
-                            <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">3. Deployment</h2>
-                            <p class="text-gray-600 mb-4">De kosten voor   Cloud-omgevingen hangen af van de grootte van het 'Resource Pack'. Hieronder de geschatte jaarlijkse kosten per pack.</p>
-                            <div id="deployment-explanation-content"></div>
-                        </div>
+        <!-- EXPLANATION VIEW (DETAILS) -->
+        <div id="explanation-view" class="hidden mt-8">
+            <div class="card">
+                <div class="flex border-b border-gray-200 mb-6 overflow-x-auto">
+                    <button class="tab-btn active px-4" data-tab="tab-platform">Platform & Users</button>
+                    <button class="tab-btn px-4" data-tab="tab-cloud">MX Cloud</button>
+                    <button class="tab-btn px-4" data-tab="tab-other-cloud">Overig</button>
+                    <button class="tab-btn px-4" data-tab="tab-genai">Add-ons</button>
+                </div>
+                <!-- Content reuse logic same as before, simplified for brevity here -->
+                <div id="tab-platform" class="tab-content block space-y-8">
+                     <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">1. Platform Pricing</h3>
+                        <table class="w-full pricing-table mb-6"><thead><tr><th>Editie</th><th>Single App</th><th>Multi App</th></tr></thead><tbody><tr><td>Standard</td><td>€11.014,80</td><td>€27.536,88</td></tr><tr><td>Premium</td><td>€22.029,60</td><td>€55.073,88</td></tr></tbody></table>
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">2. User Pricing</h3>
+                        <div class="overflow-x-auto"><table class="w-full pricing-table"><thead id="table-users-head"></thead><tbody id="table-users-body"></tbody></table></div>
                     </div>
+                </div>
+                <div id="tab-cloud" class="tab-content hidden"><div id="cloud-pricing-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div></div>
+                <div id="tab-other-cloud" class="tab-content hidden">
+                    <h3 class="font-bold">Azure/K8s/On-Prem details (zie calculator)</h3>
+                </div>
+                <div id="tab-genai" class="tab-content hidden">
+                    <h3 class="font-bold mb-2">MTA & QSM Staffels</h3>
+                    <p class="text-sm mb-4">Gebaseerd op Net ACV (Platform + Users). Verplichte eenmalige Enablement Fee: €8.615.</p>
+                    <table class="w-full pricing-table mb-4">
+                        <tr><th>ACV Range</th><th>MTA Prijs</th><th>QSM Prijs</th></tr>
+                        <tr><td>< €80k</td><td>€16.650,12 (XS)</td><td>€29.169,24 (S)</td></tr>
+                        <tr><td>€80k - €240k</td><td>€33.300,24 (S)</td><td>€29.169,24 (S)</td></tr>
+                        <tr><td>€240k - €480k</td><td>€66.655,20 (M)</td><td>€58.338,36 (M)</td></tr>
+                        <tr><td>€480k - €760k</td><td>€100.010,16 (L)</td><td>€87.507,60 (L)</td></tr>
+                        <tr><td>€760k - €980k</td><td>€133.310,40 (XL)</td><td>€116.676,72 (XL)</td></tr>
+                        <tr><td>€980k - €1.5M</td><td>€166.720,20 (2XL)</td><td>€145.845,96 (2XL)</td></tr>
+                        <tr><td>> €1.5M</td><td>€186.437,40 (3XL)</td><td>€163.164,72 (3XL)</td></tr>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- DATA SOURCES ---
+        // --- DATA ---
         const platformPrices = {
-            single: {
-                name: 'Single App',
-                tiers: {
-                    standard: { name: 'Standard', price: 10560 },
-                    premium: { name: 'Premium', price: 21120 }
-                }
-            },
-            unlimited: {
-                name: 'Unlimited Apps',
-                tiers: {
-                    standard: { name: 'Standard', price: 26400 },
-                    premium: { name: 'Premium', price: 52800 }
-                }
-            }
+            single: { name: 'Single App', tiers: { standard: { name: 'Standard', price: 11014.80 }, premium: { name: 'Premium', price: 22029.60 } } },
+            multi: { name: 'Multi App', tiers: { standard: { name: 'Standard', price: 27536.88 }, premium: { name: 'Premium', price: 55073.88 } } }
         };
-
         const userTiers = {
-            'internal-single': {
-                name: 'Interne Gebruikers (Single App)',
-                tiers: [ { limit: 500, price: 126.00 }, { limit: 5000, price: 12.60 }, { limit: 50000, price: 1.32 }, { limit: 500000, price: 0.24 }, { limit: Infinity, price: 0.12 }]
+            'internal-single': { name: 'Interne Users (Single)', tiers: [{ limit: 500, price: 137.04 }, { limit: 5000, price: 13.68 }, { limit: 50000, price: 1.44 }, { limit: 500000, price: 0.24 }, { limit: Infinity, price: 0.12 }] },
+            'internal-multi': { name: 'Interne Users (Multi)', tiers: [{ limit: 500, price: 345.24 }, { limit: 5000, price: 207.60 }, { limit: 50000, price: 69.00 }, { limit: 500000, price: 26.40 }, { limit: Infinity, price: 13.20 }] },
+            'external': { name: 'Externe Users', tiers: [{ limit: 500, price: 33.00 }, { limit: 5000, price: 8.16 }, { limit: 50000, price: 1.08 }, { limit: 500000, price: 0.24 }, { limit: Infinity, price: 0, capped: true, capLimit: 500000, capPrice: 203675.76 }] },
+            'workstation': { name: 'Workstations', tiers: [{ limit: 50, price: 1006.08 }, { limit: 150, price: 804.84 }, { limit: 500, price: 603.60 }, { limit: 1500, price: 402.36 }, { limit: Infinity, price: 201.24 }] }
+        };
+        const cloudPacks = {
+            standard: { name: 'Cloud Standard', sizes: { 'XS': 432, 'S': 864, 'M': 1728, 'L': 3456, 'XL': 6912, '2XL': 13824, '3XL': 27648, '4XL': 55296, '4XL-DB': 96786 } },
+            premium: { name: 'Cloud Premium (HA)', sizes: { 'S': 1296, 'M': 2592, 'L': 5184, 'XL': 10368, '2XL': 20736, '3XL': 41472, '4XL': 82944, '4XL-DB': 145152 } },
+            premiumPlus: { name: 'Cloud Premium Plus', sizes: { 'XL': 17280, '2XL': 34560, '3XL': 69120, '4XL': 138240, '4XL-DB': 241920 } }
+        };
+        const addons = { genai: { 'S': 1539.48, 'M': 3078.96, 'L': 6157.80 }, genaiKB: { 'standard': 2052.60 }, eventBroker: { 'S': 2605.20, 'M': 6512.88, 'L': 10854.84 }, auditTrail: { 'S': 3483.60, 'M': 6967.32, 'L': 11321.88 } };
+
+        // CORRECTED ACV Tiers
+        const acvTiers = [
+            { limit: 80000, mta: 16650.12, mtaSize:'XS', qsm: 29169.24, qsmSize:'S' },
+            { limit: 240000, mta: 33300.24, mtaSize:'S', qsm: 29169.24, qsmSize:'S' },
+            { limit: 480000, mta: 66655.20, mtaSize:'M', qsm: 58338.36, qsmSize:'M' },
+            { limit: 760000, mta: 100010.16, mtaSize:'L', qsm: 87507.60, qsmSize:'L' },
+            { limit: 980000, mta: 133310.40, mtaSize:'XL', qsm: 116676.72, qsmSize:'XL' },
+            { limit: 1500000, mta: 166720.20, mtaSize:'2XL', qsm: 145845.96, qsmSize:'2XL' },
+            { limit: Infinity, mta: 186437.40, mtaSize:'3XL', qsm: 163164.72, qsmSize:'3XL' }
+        ];
+        
+        const pmpTiers = [
+            { limit: 480000, price: 158760.36, size:'S' },
+            { limit: 980000, price: 277830.60, size:'M' },
+            { limit: 1500000, price: 396900.84, size:'L' },
+            { limit: Infinity, price: 529201.08, size:'XL' }
+        ];
+
+        // --- ELEMENTS ---
+        const els = {
+            calcView: document.getElementById('calculator-view'), expView: document.getElementById('explanation-view'), resultCard: document.getElementById('result-card'),
+            appType: document.getElementById('app-license-type'), tier: document.getElementById('platform-tier'),
+            deployMode: document.getElementById('deployment-mode'),
+            containers: { cloud: document.getElementById('deploy-cloud-container'), azure: document.getElementById('deploy-azure-container'), k8s: document.getElementById('deploy-k8s-container'), onprem: document.getElementById('deploy-onprem-container') },
+            envContainer: document.getElementById('environments-container'), addEnvBtn: document.getElementById('add-env-btn'),
+            total: document.getElementById('total-price'), breakdown: document.getElementById('calculation-breakdown'), 
+            acvDisplay: document.getElementById('acv-indicator'), acvValue: document.getElementById('acv-value'),
+            oneTimeCont: document.getElementById('onetime-container'), oneTimeVal: document.getElementById('onetime-price'), oneTimeDet: document.getElementById('onetime-details'),
+            inputs: {
+                intSingle: { c: document.getElementById('internal-single-count'), d: document.getElementById('internal-single-discount') },
+                intMulti: { c: document.getElementById('internal-multi-count'), d: document.getElementById('internal-multi-discount') },
+                ext: { c: document.getElementById('external-count'), d: document.getElementById('external-discount') },
+                work: { c: document.getElementById('workstation-count'), d: document.getElementById('workstation-discount') },
+                azureExtra: document.getElementById('azure-extra-envs'), k8sExtra: document.getElementById('k8s-extra-envs'), k8sUnl: document.getElementById('k8s-unlimited')
             },
-            'internal-multi': {
-                name: 'Interne Gebruikers (Multi-App)',
-                tiers: [ { limit: 500, price: 315.00 }, { limit: 5000, price: 189.00 }, { limit: 50000, price: 63.00 }, { limit: 500000, price: 24.00 }, { limit: Infinity, price: 12.00 }]
-            },
-            'external': {
-                name: 'Externe Gebruikers',
-                tiers: [ { limit: 500, price: 30.00 }, { limit: 5000, price: 7.56 }, { limit: 50000, price: 0.96 }, { limit: 500000, price: 0.24 }, { limit: Infinity, price: 0, capped: true }]
+            addons: { 
+                genai: document.getElementById('genai-pack'), kb: document.getElementById('genai-kb'), broker: document.getElementById('event-broker'), audit: document.getElementById('audit-trail'), 
+                mta: document.getElementById('addon-mta'), qsm: document.getElementById('addon-qsm'), qsmSelf: document.getElementById('addon-qsm-self'), pmp: document.getElementById('addon-pmp'),
+                qsmSub: document.getElementById('qsm-sub-options')
             }
         };
 
-        const cloudPackPrices = {
-            'XS': { name: 'XS', price: 396 }, 'S': { name: 'S', price: 792 }, 'M': { name: 'M', price: 1584 },
-            'L': { name: 'L', price: 3168 }, 'XL': { name: 'XL', price: 6336 }, 'XXL': { name: 'XXL', price: 12672 }
-        };
+        const formatMoney = (n) => new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(n);
 
-        // --- DOM ELEMENTS ---
-        const appLicenseTypeEl = document.getElementById('app-license-type');
-        const platformTierEl = document.getElementById('platform-tier');
-        const addEnvBtn = document.getElementById('add-env-btn');
-        const environmentsContainer = document.getElementById('environments-container');
-        const calculateBtn = document.getElementById('calculate-btn');
-        const resultContainer = document.getElementById('result-container');
-        const totalPriceEl = document.getElementById('total-price');
-        const breakdownEl = document.getElementById('calculation-breakdown');
-        const errorMessageEl = document.getElementById('error-message');
-        const calculatorView = document.getElementById('calculator-view');
-        const explanationView = document.getElementById('explanation-view');
-        const showCalculatorBtn = document.getElementById('show-calculator-btn');
-        const showExplanationBtn = document.getElementById('show-explanation-btn');
+        function init() {
+            for(let k in platformPrices) els.appType.add(new Option(platformPrices[k].name, k));
+            updatePlatformTiers();
+            addEnvRow();
+            renderExp();
 
-        // --- HELPER FUNCTIONS ---
-        const formatCurrency = (amount) => new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(amount);
+            els.appType.onchange = updatePlatformTiers;
+            els.deployMode.onchange = updateDeployUI;
+            els.addEnvBtn.onclick = addEnvRow;
+            document.getElementById('calculate-btn').onclick = calculate;
+            
+            // QSM Toggle Logic
+            els.addons.qsm.addEventListener('change', (e) => {
+                if(e.target.checked) els.addons.qsmSub.classList.remove('hidden');
+                else {
+                    els.addons.qsmSub.classList.add('hidden');
+                    els.addons.qsmSelf.checked = false;
+                }
+            });
 
-        // --- UI LOGIC ---
-        function switchView(viewToShow) {
-            if (viewToShow === 'calculator') {
-                calculatorView.classList.remove('hidden');
-                explanationView.classList.add('hidden');
-                showCalculatorBtn.classList.add('active');
-                showCalculatorBtn.classList.remove('inactive');
-                showExplanationBtn.classList.add('inactive');
-                showExplanationBtn.classList.remove('active');
-            } else {
-                calculatorView.classList.add('hidden');
-                explanationView.classList.remove('hidden');
-                showCalculatorBtn.classList.add('inactive');
-                showCalculatorBtn.classList.remove('active');
-                showExplanationBtn.classList.add('active');
-                showExplanationBtn.classList.remove('inactive');
-            }
+            document.getElementById('show-calculator-btn').onclick = () => setView('calc');
+            document.getElementById('show-explanation-btn').onclick = () => setView('exp');
+            document.querySelectorAll('.tab-btn').forEach(b => b.onclick = (e) => setTab(e.target));
+            updateDeployUI();
         }
 
-        function populateAppLicenseTypes() {
-            appLicenseTypeEl.innerHTML = '';
-            for (const key in platformPrices) {
-                const option = document.createElement('option');
-                option.value = key;
-                option.textContent = platformPrices[key].name;
-                appLicenseTypeEl.appendChild(option);
-            }
+        function setView(v) {
+            els.calcView.style.display = v==='calc'?'block':'none';
+            els.resultCard.style.display = v==='calc'?'block':'none';
+            els.expView.style.display = v==='exp'?'block':'none';
+            document.getElementById('show-calculator-btn').className = `view-toggle-btn ${v==='calc'?'active':'inactive'} rounded-md`;
+            document.getElementById('show-explanation-btn').className = `view-toggle-btn ${v==='exp'?'active':'inactive'} rounded-md`;
+        }
+
+        function setTab(target) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            target.classList.add('active');
+            document.getElementById(target.dataset.tab).classList.remove('hidden');
+        }
+
+        function updateDeployUI() {
+            const mode = els.deployMode.value;
+            Object.values(els.containers).forEach(c => c.classList.add('hidden'));
+            els.addEnvBtn.classList.add('hidden');
+            document.getElementById('dedicated-banner').classList.add('hidden');
+
+            if(mode === 'public_cloud' || mode === 'dedicated_cloud') {
+                els.containers.cloud.classList.remove('hidden');
+                els.addEnvBtn.classList.remove('hidden');
+                if(mode === 'dedicated_cloud') document.getElementById('dedicated-banner').classList.remove('hidden');
+            } else if (mode === 'azure') els.containers.azure.classList.remove('hidden');
+            else if (mode === 'kubernetes') els.containers.k8s.classList.remove('hidden');
+            else els.containers.onprem.classList.remove('hidden');
         }
 
         function updatePlatformTiers() {
-            const licenseType = appLicenseTypeEl.value;
-            const tiers = platformPrices[licenseType].tiers;
-            platformTierEl.innerHTML = '';
-            for (const key in tiers) {
-                const option = document.createElement('option');
-                option.value = key;
-                option.textContent = tiers[key].name;
-                platformTierEl.appendChild(option);
-            }
+            const type = els.appType.value;
+            els.tier.innerHTML = '';
+            for(let k in platformPrices[type].tiers) els.tier.add(new Option(`${platformPrices[type].tiers[k].name} (${formatMoney(platformPrices[type].tiers[k].price)})`, k));
         }
 
-        function addEnvironmentRow() {
-            const rowId = `env-row-${Date.now()}`;
-            const row = document.createElement('div');
-            row.id = rowId;
-            row.className = 'flex items-center space-x-2';
-            row.innerHTML = `<select class="input-field env-size w-1/2">${Object.keys(cloudPackPrices).map(size => `<option value="${size}">${cloudPackPrices[size].name}</option>`).join('')}</select><input type="number" min="1" value="1" class="input-field env-qty w-1/4"><button type="button" onclick="document.getElementById('${rowId}').remove()" class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>`;
-            environmentsContainer.appendChild(row);
+        function addEnvRow() {
+            const div = document.createElement('div');
+            div.className = 'grid grid-cols-12 gap-2 items-center mb-2';
+            let typeSel = `<select class="input-field col-span-4 text-sm env-type" onchange="updateSizeOptions(this)">`;
+            for(let k in cloudPacks) typeSel += `<option value="${k}">${cloudPacks[k].name}</option>`;
+            typeSel += `</select>`;
+            let sizeSel = `<select class="input-field col-span-4 text-sm env-size">`;
+            for(let s in cloudPacks.standard.sizes) sizeSel += `<option value="${s}">${s} (${formatMoney(cloudPacks.standard.sizes[s])})</option>`;
+            sizeSel += `</select>`;
+            div.innerHTML = `${typeSel}${sizeSel}<div class="col-span-3"><input type="number" value="1" min="1" class="input-field text-sm env-qty"></div><button type="button" onclick="this.parentElement.remove()" class="col-span-1 text-red-400 hover:text-red-600"><i class="fa-solid fa-trash"></i></button>`;
+            els.envContainer.appendChild(div);
         }
-        
-        function populateExplanationPage() {
-            // Platform
-            const platformContainer = document.getElementById('platform-explanation-content');
-            platformContainer.innerHTML = '';
-            for (const typeKey in platformPrices) {
-                const type = platformPrices[typeKey];
-                let tiersHTML = '';
-                for (const tierKey in type.tiers) {
-                    const tier = type.tiers[tierKey];
-                    tiersHTML += `<div class="p-4 border rounded-lg shadow-sm">
-                                    <h4 class="font-semibold text-lg">${tier.name}</h4>
-                                    <p class="text-2xl font-bold text-indigo-600">${formatCurrency(tier.price)}</p>
-                                    <p class="text-gray-500 text-sm">per jaar</p>
-                                 </div>`;
-                }
-                platformContainer.innerHTML += `<div class="space-y-3">
-                                                    <h3 class="text-xl font-semibold text-gray-700">${type.name}</h3>
-                                                    <div class="grid grid-cols-2 gap-4">${tiersHTML}</div>
-                                                </div>`;
-            }
-
-            // Users
-            const usersContainer = document.getElementById('users-explanation-content');
-            usersContainer.innerHTML = '';
-            for (const key in userTiers) {
-                const userType = userTiers[key];
-                let tableRows = '';
-                let lowerBound = 1;
-                userType.tiers.forEach(tier => {
-                    if (tier.price > 0) {
-                        const range = tier.limit === Infinity ? `≥ ${lowerBound.toLocaleString('nl-NL')}` : `${lowerBound.toLocaleString('nl-NL')} - ${tier.limit.toLocaleString('nl-NL')}`;
-                        tableRows += `<tr><td class="p-2">${range}</td><td class="p-2">${formatCurrency(tier.price)}</td></tr>`;
-                        lowerBound = tier.limit + 1;
-                    }
-                });
-                usersContainer.innerHTML += `<div>
-                                                <h3 class="text-lg font-semibold text-gray-700 mb-2">${userType.name}</h3>
-                                                <table class="w-full text-left border rounded-lg"><thead class="bg-gray-50"><tr><th class="p-2 font-medium">Aantal Gebruikers</th><th class="p-2 font-medium">Prijs per Gebruiker</th></tr></thead><tbody class="divide-y">${tableRows}</tbody></table>
-                                             </div>`;
-            }
-            
-            // Deployment
-            const deploymentContainer = document.getElementById('deployment-explanation-content');
-            let depTableRows = '';
-            for(const key in cloudPackPrices) {
-                const pack = cloudPackPrices[key];
-                depTableRows += `<tr><td class="p-2">${pack.name}</td><td class="p-2">${formatCurrency(pack.price)}</td></tr>`;
-            }
-            deploymentContainer.innerHTML = `<table class="w-full md:w-1/2 text-left border rounded-lg"><thead class="bg-gray-50"><tr><th class="p-2 font-medium">Grootte</th><th class="p-2 font-medium">Jaarlijkse Prijs (schatting)</th></tr></thead><tbody class="divide-y">${depTableRows}</tbody></table>`;
+        window.updateSizeOptions = function(el) {
+            const sizeSel = el.nextElementSibling; sizeSel.innerHTML = '';
+            const sizes = cloudPacks[el.value].sizes;
+            for(let s in sizes) sizeSel.add(new Option(`${s} (${formatMoney(sizes[s])})`, s));
         }
 
-
-        // --- CALCULATION LOGIC ---
-        function calculateTieredPrice(users, tierConfig) {
-            let totalCost = 0, remainingUsers = users, lowerBound = 1, breakdownHTML = '';
-            const tiers = tierConfig.tiers;
-            if (tierConfig.tiers[tierConfig.tiers.length - 1].capped && users > tierConfig.tiers[tierConfig.tiers.length - 2].limit) {
-                const { totalCost: capCost, breakdownHTML: capBreakdown } = calculateTieredPrice(tierConfig.tiers[tierConfig.tiers.length - 2].limit, tierConfig);
-                return { totalCost: capCost, breakdownHTML: capBreakdown + `<div class="p-2 bg-yellow-100 border-l-4 border-yellow-500 rounded mt-2 text-xs"><p class="font-semibold text-yellow-800">Prijs is gemaximeerd (Capped)</p></div>` };
+        function calcTiered(count, tiers) {
+            if(count<=0) return {cost:0, html:''};
+            if(tiers.capped && count > tiers.capLimit) return { cost: tiers.capPrice, html: `<div class="flex justify-between text-xs text-yellow-600 bg-yellow-50 p-1 rounded"><span>Capped (> ${tiers.capLimit.toLocaleString()})</span><span>${formatMoney(tiers.capPrice)}</span></div>` };
+            let rem = count, total = 0, lower = 1, html = '';
+            for(let t of tiers.tiers) {
+                if(rem<=0) break;
+                let num = Math.min(rem, t.limit-lower+1);
+                let cost = num * t.price;
+                total += cost;
+                html += `<div class="flex justify-between text-xs text-gray-500"><span>${num.toLocaleString()} x Staff ${t.limit===Infinity?'>'+(lower-1):'≤'+t.limit}</span><span>${formatMoney(cost)}</span></div>`;
+                rem -= num; lower = t.limit+1;
             }
-            for (const tier of tiers) {
-                if (remainingUsers <= 0) break;
-                const tierRange = tier.limit - lowerBound + 1;
-                const usersInTier = Math.min(remainingUsers, tierRange);
-                if (usersInTier > 0) {
-                    const costForTier = usersInTier * tier.price;
-                    totalCost += costForTier;
-                    const tierLabel = tier.limit === Infinity ? `≥ ${lowerBound.toLocaleString('nl-NL')}` : `${lowerBound.toLocaleString('nl-NL')} - ${tier.limit.toLocaleString('nl-NL')}`;
-                    breakdownHTML += `<div class="flex justify-between items-center text-xs"><span class="text-gray-600">Staffel (${tierLabel}):</span><span class="font-mono">${formatCurrency(costForTier)}</span></div>`;
-                }
-                remainingUsers -= usersInTier;
-                lowerBound = tier.limit + 1;
-            }
-            return { totalCost, breakdownHTML };
+            return {cost: total, html};
         }
 
-        function calculateAll() {
-            let grandTotal = 0;
+        function calculate() {
+            let platformUsersTotal = 0; // ACV Base
+            let cloudTotal = 0;
+            let addonsTotal = 0;
+            let oneTimeTotal = 0;
             let breakdownHTML = '';
-            errorMessageEl.textContent = '';
-
-            // 1. Platform Calculation
-            const licenseType = appLicenseTypeEl.value;
-            const tierKey = platformTierEl.value;
-            const platformTier = platformPrices[licenseType].tiers[tierKey];
-            const platformFinalCost = platformTier.price;
-            grandTotal += platformFinalCost;
-            breakdownHTML += createBreakdownSection('Platform Licentie', `${platformPrices[licenseType].name} - ${platformTier.name}`, platformFinalCost, null, platformFinalCost);
-
-            // 2. User Calculation
-            let totalUserCost = 0;
-            let userBreakdownHTML = '';
-            ['internal-single', 'internal-multi', 'external'].forEach(type => {
-                const count = parseInt(document.getElementById(`${type}-count`).value) || 0;
-                if (count > 0) {
-                    const discount = parseFloat(document.getElementById(`${type}-discount`).value) || 0;
-                    const tierConfig = userTiers[type];
-                    const { totalCost: originalCost, breakdownHTML: tieredBreakdown } = calculateTieredPrice(count, tierConfig);
-                    const discountAmount = originalCost * (discount / 100);
-                    const finalCost = originalCost - discountAmount;
-                    totalUserCost += finalCost;
-                    userBreakdownHTML += `<div class="border-t border-gray-200 pt-2 mt-2"><div class="flex justify-between font-medium text-sm"><span>${tierConfig.name} (${count} users)</span><span>${formatCurrency(finalCost)}</span></div>${tieredBreakdown}${discount > 0 ? `<div class="flex justify-between text-xs text-red-600"><span>Korting (${discount}%):</span><span>-${formatCurrency(discountAmount)}</span></div>` : ''}</div>`;
-                }
-            });
-            if (totalUserCost > 0) {
-                grandTotal += totalUserCost;
-                breakdownHTML += createBreakdownSection('Gebruikers', userBreakdownHTML, totalUserCost, null, totalUserCost, true);
-            }
-
-            // 3. Deployment Calculation
-            let totalDeploymentCost = 0;
-            let deploymentBreakdownHTML = '';
-            document.querySelectorAll('#environments-container .env-size').forEach((select) => {
-                const row = select.closest('div');
-                const qty = parseInt(row.querySelector('.env-qty').value) || 0;
-                const size = select.value;
-                const pack = cloudPackPrices[size];
-                if (qty > 0) {
-                    const cost = qty * pack.price;
-                    totalDeploymentCost += cost;
-                    deploymentBreakdownHTML += `<div class="flex justify-between text-sm"><span>${qty} x Omgeving (${pack.name})</span><span>${formatCurrency(cost)}</span></div>`;
-                }
-            });
-            if (totalDeploymentCost > 0) {
-                grandTotal += totalDeploymentCost;
-                breakdownHTML += createBreakdownSection('Deployment', deploymentBreakdownHTML, totalDeploymentCost, null, totalDeploymentCost, true);
-            }
-
-            totalPriceEl.textContent = formatCurrency(grandTotal);
-            breakdownEl.innerHTML = breakdownHTML;
-            resultContainer.classList.add('show');
-        }
-
-        function createBreakdownSection(title, details, originalCost, discount, finalCost, isComplex = false) {
-            let discountHTML = '';
-            if (discount !== null && discount > 0) {
-                const discountAmount = originalCost * (discount / 100);
-                discountHTML = `<div class="flex justify-between text-xs mt-1"><span>Subtotaal:</span><span>${formatCurrency(originalCost)}</span></div><div class="flex justify-between text-xs text-red-600"><span>Korting (${discount}%):</span><span>-${formatCurrency(discountAmount)}</span></div>`;
-            }
-            return `<div class="border border-gray-200 p-3 rounded-lg"><div class="flex justify-between items-start"><h4 class="font-semibold text-md text-gray-700">${title}</h4><span class="font-bold text-lg text-gray-800">${formatCurrency(finalCost)}</span></div><div class="mt-1">${isComplex ? details : `<span class="text-sm text-gray-600">${details}</span>`}</div>${discountHTML}</div>`;
-        }
-
-        // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            populateAppLicenseTypes(); // FIX: Populate first dropdown
-            updatePlatformTiers();     // THEN populate second dropdown
-            addEnvironmentRow();
-            populateExplanationPage();
+            let oneTimeHTML = '';
             
-            showCalculatorBtn.addEventListener('click', () => switchView('calculator'));
-            showExplanationBtn.addEventListener('click', () => switchView('explanation'));
-            appLicenseTypeEl.addEventListener('change', updatePlatformTiers);
-            addEnvBtn.addEventListener('click', addEnvironmentRow);
-            calculateBtn.addEventListener('click', calculateAll);
+            // 1. Platform (Part of ACV)
+            const pt = platformPrices[els.appType.value].tiers[els.tier.value];
+            platformUsersTotal += pt.price;
+            breakdownHTML += itemHTML('Platform Licentie', `${platformPrices[els.appType.value].name} - ${pt.name}`, pt.price);
 
-            // Set initial view
-            switchView('calculator');
-        });
+            // 2. Users (Part of ACV)
+            let uTot = 0, uHtml = '';
+            const uList = [
+                {k:'internal-single', i:els.inputs.intSingle}, {k:'internal-multi', i:els.inputs.intMulti},
+                {k:'external', i:els.inputs.ext}, {k:'workstation', i:els.inputs.work}
+            ];
+            uList.forEach(u => {
+                let cnt = parseInt(u.i.c.value)||0;
+                if(cnt>0) {
+                    let disc = parseFloat(u.i.d.value)||0;
+                    let res = calcTiered(cnt, userTiers[u.k]);
+                    let dCost = res.cost * (1 - disc/100);
+                    uTot += dCost;
+                    uHtml += `<div class="mt-2 border-l-2 border-indigo-100 pl-2"><div class="flex justify-between text-sm font-medium"><span>${userTiers[u.k].name} (${cnt})</span><span>${formatMoney(dCost)}</span></div>${res.html}${disc>0?`<div class="text-xs text-green-600 text-right">-${disc}% korting</div>`:''}</div>`;
+                }
+            });
+            if(uTot>0) { platformUsersTotal += uTot; breakdownHTML += `<div class="py-2 border-b border-gray-100"><div class="font-semibold text-gray-800">Gebruikers</div>${uHtml}</div>`; }
+
+            // CALC ACV BASE (Used for MTA/QSM/PMP Tiers)
+            const acvBase = platformUsersTotal;
+            els.acvDisplay.classList.remove('hidden'); els.acvValue.textContent = formatMoney(acvBase);
+
+            // 3. Deployment (Excluded from ACV)
+            const mode = els.deployMode.value;
+            let dHtml = '';
+            
+            if(mode === 'public_cloud' || mode === 'dedicated_cloud') {
+                if(mode === 'dedicated_cloud') { cloudTotal += 312612; dHtml += subItem('Dedicated Cloud Fee', 312612); }
+                document.querySelectorAll('#environments-container > div').forEach(row => {
+                    let t = row.querySelector('.env-type').value, s = row.querySelector('.env-size').value, q = parseInt(row.querySelector('.env-qty').value)||0;
+                    if(q>0) { let c = cloudPacks[t].sizes[s]*q; cloudTotal += c; dHtml += subItem(`${q}x ${cloudPacks[t].name} (${s})`, c); }
+                });
+            } else if (mode === 'azure') {
+                cloudTotal += 5566.32; dHtml += subItem('Azure Base Package', 5566.32);
+                let ext = parseInt(els.inputs.azureExtra.value)||0;
+                if(ext>0) { let c = ext*604.80; cloudTotal += c; dHtml += subItem(`${ext}x Extra Env`, c); }
+            } else if (mode === 'kubernetes') {
+                if(els.inputs.k8sUnl.checked) { cloudTotal += 58081.56; dHtml += subItem('K8s Unlimited Package', 58081.56); }
+                else {
+                    cloudTotal += 5566.56; dHtml += subItem('K8s Base Package', 5566.56);
+                    let ext = parseInt(els.inputs.k8sExtra.value)||0;
+                    let envTiers = { tiers: [{limit:50, price:483.12}, {limit:100, price:357.12}, {limit:150, price:210.12}, {limit:Infinity, price:0}] };
+                    let res = calcTiered(ext, envTiers);
+                    if(res.cost>0) { cloudTotal += res.cost; dHtml += `<div class="mt-1 text-xs text-gray-600 pl-2 border-l border-gray-300"><div>Extra Envs (${ext})</div>${res.html}</div>`; }
+                }
+            } else if (mode === 'onprem') {
+                let type = document.querySelector('input[name="onprem-type"]:checked').value;
+                let c = type==='single'?5569.20:27833.28;
+                cloudTotal += c; dHtml += subItem(`On-Prem (${type})`, c);
+            }
+            if(cloudTotal>0) { breakdownHTML += itemHTML('Deployment', dHtml, cloudTotal, true); }
+
+            // 4. Addons
+            let aHtml = '';
+            const simpleAddons = [
+                {el:els.addons.genai, data:addons.genai, n:'GenAI'}, {el:els.addons.kb, data:addons.genaiKB, n:'KB'},
+                {el:els.addons.broker, data:addons.eventBroker, n:'Broker'}, {el:els.addons.audit, data:addons.auditTrail, n:'Audit'}
+            ];
+            simpleAddons.forEach(a => { if(a.el.value) { let c = a.data[a.el.value]; addonsTotal += c; aHtml += subItem(`${a.n} (${a.el.value})`, c); }});
+            
+            // ACV Addons
+            if(els.addons.mta.checked) {
+                let t = acvTiers.find(x=>acvBase<=x.limit)||acvTiers[acvTiers.length-1];
+                addonsTotal += t.mta;
+                aHtml += subItem(`MTA (${t.mtaSize})`, t.mta);
+                oneTimeTotal += 8615;
+                oneTimeHTML += `<div class="flex justify-between"><span>MTA Enablement Pkg</span><span>€8.615,00</span></div>`;
+            }
+            if(els.addons.qsm.checked) {
+                let t = acvTiers.find(x=>acvBase<=x.limit)||acvTiers[acvTiers.length-1];
+                addonsTotal += t.qsm;
+                aHtml += subItem(`QSM (${t.qsmSize})`, t.qsm);
+                oneTimeTotal += 8615;
+                oneTimeHTML += `<div class="flex justify-between"><span>QSM Enablement Pkg</span><span>€8.615,00</span></div>`;
+
+                // Handle QSM Self-Hosted
+                if(els.addons.qsmSelf.checked) {
+                    if(acvBase <= 240000) {
+                        aHtml += `<div class="text-xs text-red-600 pl-2 italic">⚠️ Self-Hosted niet beschikbaar (ACV < €240k)</div>`;
+                    } else {
+                        addonsTotal += 52920;
+                        aHtml += subItem('QSM Self-Hosted Annual', 52920);
+                        oneTimeTotal += 20500;
+                        oneTimeHTML += `<div class="flex justify-between"><span>QSM Install Pkg</span><span>€20.500,00</span></div>`;
+                    }
+                }
+            }
+            if(els.addons.pmp.checked) {
+                let t = pmpTiers.find(x=>acvBase<=x.limit)||pmpTiers[pmpTiers.length-1];
+                addonsTotal += t.price;
+                aHtml += subItem(`PMP (${t.size})`, t.price);
+                oneTimeHTML += `<div class="flex justify-between text-gray-500 italic"><span>PMP Implementation</span><span>(SoW)</span></div>`;
+            }
+
+            if(addonsTotal>0) { breakdownHTML += itemHTML('Add-ons (Jaarlijks)', aHtml, addonsTotal, true); }
+
+            // Final Sum
+            const grandTotal = platformUsersTotal + cloudTotal + addonsTotal;
+            els.total.textContent = formatMoney(grandTotal);
+            els.breakdown.innerHTML = breakdownHTML;
+
+            // Handle One-Time
+            if(oneTimeTotal > 0 || els.addons.pmp.checked) {
+                els.oneTimeCont.classList.remove('hidden');
+                els.oneTimeVal.textContent = formatMoney(oneTimeTotal);
+                els.oneTimeDet.innerHTML = oneTimeHTML;
+            } else {
+                els.oneTimeCont.classList.add('hidden');
+            }
+        }
+
+        function itemHTML(t,d,p,raw=false) { return `<div class="py-3 border-b border-gray-100 last:border-0"><div class="flex justify-between items-center mb-1"><span class="font-semibold text-gray-800">${t}</span><span class="font-bold text-gray-900">${formatMoney(p)}</span></div>${raw?d:`<div class="text-xs text-gray-500">${d}</div>`}</div>`; }
+        function subItem(n,p) { return `<div class="flex justify-between text-xs text-gray-600 mt-1"><span>${n}</span><span>${formatMoney(p)}</span></div>`; }
+
+        function renderExp() {
+            let tbody = document.getElementById('table-users-body'), thead = document.getElementById('table-users-head');
+            thead.innerHTML = `<tr><th>Staffel</th><th>Int. Single</th><th>Int. Multi</th><th>Extern</th></tr>`;
+            let rows = '';
+            userTiers['internal-single'].tiers.forEach((t,i) => {
+                let lbl = t.limit===Infinity?`> ${userTiers['internal-single'].tiers[i-1].limit}`:`≤ ${t.limit}`;
+                rows += `<tr><td>${lbl}</td><td>${formatMoney(t.price)}</td><td>${formatMoney(userTiers['internal-multi'].tiers[i].price)}</td><td>${formatMoney(userTiers['external'].tiers[i].price)}</td></tr>`;
+            });
+            tbody.innerHTML = rows;
+            let cHtml = '';
+            for(let k in cloudPacks) {
+                cHtml += `<div class="rounded border border-gray-200"><div class="bg-gray-50 p-2 font-bold text-sm border-b">${cloudPacks[k].name}</div><table class="w-full pricing-table">`;
+                for(let s in cloudPacks[k].sizes) cHtml += `<tr><td class="text-xs">${s}</td><td class="text-right text-xs">${formatMoney(cloudPacks[k].sizes[s])}</td></tr>`;
+                cHtml += `</table></div>`;
+            }
+            document.getElementById('cloud-pricing-grid').innerHTML = cHtml;
+        }
+
+        init();
     </script>
 </body>
 </html>
-
